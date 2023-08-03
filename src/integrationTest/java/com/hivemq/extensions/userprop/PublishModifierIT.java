@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hivemq.extensions.helloworld;
+package com.hivemq.extensions.userprop;
 
 import com.hivemq.client.mqtt.MqttGlobalPublishFilter;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * This tests the functionality of the {@link HelloWorldInterceptor}.
+ * This tests the functionality of the {@link PublishModifier}.
  * It uses the HiveMQ Testcontainer to automatically package and deploy this extension inside a HiveMQ docker container.
  * <p>
  * This integration test MUST be executed by Gradle as the extension is built by the 'hivemqExtensionZip' task.
@@ -43,11 +43,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @since 4.3.1
  */
 @Testcontainers
-class HelloWorldInterceptorIT {
+class PublishModifierIT {
 
     @Container
     final @NotNull HiveMQContainer extension = new HiveMQContainer(DockerImageName.parse("hivemq/hivemq-ce").withTag("latest"))
-            .withExtension(MountableFile.forClasspathResource("hivemq-hello-world-extension"));
+            .withExtension(MountableFile.forClasspathResource("user-property-extension"));
 
     @Test
     @Timeout(value = 5, unit = TimeUnit.MINUTES)

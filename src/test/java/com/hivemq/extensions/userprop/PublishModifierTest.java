@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hivemq.extensions.helloworld;
+package com.hivemq.extensions.userprop;
 
 import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.interceptor.publish.parameter.PublishInboundInput;
@@ -32,16 +32,16 @@ import static org.mockito.Mockito.*;
 /**
  * @author Yannick Weber
  */
-class HelloWorldInterceptorTest {
+class PublishModifierTest {
 
-    private @NotNull HelloWorldInterceptor helloWorldInterceptor;
+    private @NotNull PublishModifier publishModifier;
     private @NotNull PublishInboundInput publishInboundInput;
     private @NotNull PublishInboundOutput publishInboundOutput;
     private @NotNull ModifiablePublishPacket publishPacket;
 
     @BeforeEach
     void setUp() {
-        helloWorldInterceptor = new HelloWorldInterceptor();
+        publishModifier = new PublishModifier();
         publishInboundInput = mock(PublishInboundInput.class);
         publishInboundOutput = mock(PublishInboundOutput.class);
         publishPacket = mock(ModifiablePublishPacket.class);
@@ -51,7 +51,7 @@ class HelloWorldInterceptorTest {
     @Test
     void topicHelloWorld_payloadModified() {
         when(publishPacket.getTopic()).thenReturn("hello/world");
-        helloWorldInterceptor.onInboundPublish(publishInboundInput, publishInboundOutput);
+        publishModifier.onInboundPublish(publishInboundInput, publishInboundOutput);
         final ArgumentCaptor<ByteBuffer> captor = ArgumentCaptor.forClass(ByteBuffer.class);
         verify(publishPacket).setPayload(captor.capture());
         assertEquals("Hello World!", new String(captor.getValue().array(), StandardCharsets.UTF_8));
@@ -60,7 +60,7 @@ class HelloWorldInterceptorTest {
     @Test
     void topicNotHelloWorld_payloadNotModified() {
         when(publishPacket.getTopic()).thenReturn("some/topic");
-        helloWorldInterceptor.onInboundPublish(publishInboundInput, publishInboundOutput);
+        publishModifier.onInboundPublish(publishInboundInput, publishInboundOutput);
         verify(publishPacket, times(0)).setPayload(any());
     }
 }

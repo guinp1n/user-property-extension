@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hivemq.extensions.helloworld;
+package com.hivemq.extensions.userprop;
 
 import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.interceptor.publish.PublishInboundInterceptor;
 import com.hivemq.extension.sdk.api.interceptor.publish.parameter.PublishInboundInput;
 import com.hivemq.extension.sdk.api.interceptor.publish.parameter.PublishInboundOutput;
+import com.hivemq.extension.sdk.api.packets.general.MqttVersion;
 import com.hivemq.extension.sdk.api.packets.publish.ModifiablePublishPacket;
 
 import java.nio.ByteBuffer;
@@ -26,12 +27,12 @@ import java.nio.charset.StandardCharsets;
 
 /**
  * This is a very simple {@link PublishInboundInterceptor},
- * it changes the payload of every incoming PUBLISH with the topic 'hello/world' to 'Hello World!'.
+ * it adds user propperty to every incoming PUBLISH MQTT 3
  *
- * @author Yannick Weber
- * @since 4.3.1
+ * @author Dasha
+ * @since 4.18.0
  */
-public class HelloWorldInterceptor implements PublishInboundInterceptor {
+public class PublishModifier implements PublishInboundInterceptor {
 
     @Override
     public void onInboundPublish(
@@ -39,9 +40,13 @@ public class HelloWorldInterceptor implements PublishInboundInterceptor {
             final @NotNull PublishInboundOutput publishInboundOutput) {
 
         final ModifiablePublishPacket publishPacket = publishInboundOutput.getPublishPacket();
-        if ("hello/world".equals(publishPacket.getTopic())) {
-            final ByteBuffer payload = ByteBuffer.wrap("Hello World!".getBytes(StandardCharsets.UTF_8));
-            publishPacket.setPayload(payload);
+        if ( MqttVersion.V_5 != publishInboundInput.getConnectionInformation().getMqttVersion() ) {
+            publishPacket.getUserProperties().addUserProperty("kafkaKey",
+                    generateKafkaKeyFromPublish(publishInboundInput) );
         }
+    }
+
+    private String generateKafkaKeyFromPublish(final @NotNull PublishInboundInput publishInboundInput) {
+        return publishInboundInput.getClientInformation().getClientId();
     }
 }

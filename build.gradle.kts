@@ -12,7 +12,7 @@ hivemqExtension {
     author.set("HiveMQ")
     priority.set(1000)
     startPriority.set(1000)
-    mainClass.set("$group.helloworld.HelloWorldMain")
+    mainClass.set("$group.userprop.Main")
     sdkVersion.set("$version")
 
     resources {
