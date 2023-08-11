@@ -29,7 +29,7 @@ import java.nio.charset.StandardCharsets;
  * This is a very simple {@link PublishInboundInterceptor},
  * it adds user propperty to every incoming PUBLISH MQTT 3
  *
- * @author Dasha
+ * @author Dasha Samkova
  * @since 4.18.0
  */
 public class PublishModifier implements PublishInboundInterceptor {
